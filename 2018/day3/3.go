@@ -46,14 +46,36 @@ func ParsePattern(s string) Pattern {
 	return p
 }
 
+// GenSquare plots the pattern
+func GenSquare(x, y, w, h int) map[string]bool {
+	coords := make(map[string]bool)
+	for row := 1; row <= h; row++ {
+		for width := 1; width <= w; width++ {
+			pos := strconv.Itoa(width+x) + "," + strconv.Itoa(row+y)
+			coords[pos] = true
+		}
+	}
+	return coords
+}
+
 func main() {
-	puzzle, err := readInput("3.bak")
+	puzzle, err := readInput("3.txt")
 	if err != nil {
 		panic(err)
 	}
 
+	m := make(map[string]bool)
+	var overlaps int
+
 	for _, line := range puzzle {
 		p := ParsePattern(line)
-		fmt.Printf("%d x %d\n", p.w, p.h)
+		for k, _ := range GenSquare(p.x, p.y, p.w, p.h) {
+			if _, ok := m[k]; ok {
+				overlaps++
+			} else {
+				m[k] = true
+			}
+		}
 	}
+	fmt.Println("overlaps:", overlaps)
 }
